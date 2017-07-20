@@ -3,7 +3,6 @@ var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 var fs = require('fs');
 var helper = require('./http-helpers');
-var fetcher = require('../workers/htmlfetcher');
 
 exports.handleRequest = function (req, res) {
   // console.log(req);
@@ -12,11 +11,12 @@ exports.handleRequest = function (req, res) {
   if (req.method === 'POST') {
     var statusCode = 302;
     var body = '';
-    res.writeHead(statusCode, helper.headers);
     req.on('data', (chunk) => {
       body += chunk;
     });
     req.on('end', () => {
+    // console.log('yyyyyyyyyyyyyyyyyyyyyyyyy', body.slice(4));
+    // res.setHeader('Location', body.slice(4));
       //console.log('data:', body.slice(4));
       archive.addUrlToList(body.slice(4), (err) => {
         if (err) {
@@ -24,13 +24,14 @@ exports.handleRequest = function (req, res) {
         }
         console.log('Stop complaining about needing callback. It is posted.');
       });
+      res.setHeader('Location', body.slice(4));
+      res.writeHead(statusCode, helper.headers);
       res.end();
     });
   } else if ( req.method === 'GET') {
     var statusCode = 200;
     // var test = '';
     var asset;
-    //fetcher.htmlfetcher();
     //console.log('jdfklfjldskjflsjflk');
     //console.log(archive.paths.siteAssets + '/index.html');
     res.writeHead(statusCode, helper.headers);
@@ -40,7 +41,7 @@ exports.handleRequest = function (req, res) {
       helper.serveAssets(res, asset, (data) => { res.end(data); });
     } else if (req.url === '/style.css') {
       asset = archive.paths.siteAssets + '/style.css';
-      helper.serveAssets(res, asset, (data) => {res.end(data);});
+      helper.serveAssets(res, asset, (data) => { res.end(data); });
     } else {
       var check;
       //fetcher.htmlfetcher();
@@ -56,7 +57,7 @@ exports.handleRequest = function (req, res) {
           res.writeHead(statusCode, helper.headers);
           asset = archive.paths.siteAssets + '/loading.html';   
         }
-        helper.serveAssets(res, asset, (data) => {res.end(data)});
+        helper.serveAssets(res, asset, (data) => { res.end(data); });
       });
     }
     

@@ -64,10 +64,14 @@ exports.addUrlToList = function(url, callback) {
   //   console.log('Before: ', data)
   // })
 
-
+  exports.isUrlInList(url, (include) => {
+    //console.log('include', include, '=====================================')
+    if (!include) {
+      fs.appendFile(exports.paths.list, url + '\n', 'utf8', callback);
+    }
+  });
   // exports.isUrlInList(url, (isInList) => {
   //   if (!isInList) {
-  fs.appendFile(exports.paths.list, url + '\n', 'utf8', callback);
   //   }
   // });
 
@@ -94,7 +98,7 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
 
-
+  urls.pop();
   urls.forEach((url) => {
     //var fixtureName = url;
     exports.isUrlArchived(url, (include) => {
@@ -107,18 +111,21 @@ exports.downloadUrls = function(urls) {
         // fs.close(fd);
         // console.log('is it here???')
         // // Write data to the file.
-        fs.writeFile(fixturePath, 'HTML STUFF', 'utf8', (err) => {
+        fs.appendFile(fixturePath, 'HTML STUFF', 'utf8', (err) => {
           if (err) {
             throw err;
           }
           console.log('It has done its job, gives it a break');
-        });
+        // });
     //   }
-    });
+        });
     // fs.readFile(fixturePath, 'utf8', (err, data) => {
     //   console.log('DATA: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', data);
     // });
+      }
+    }); 
   });
+
 };
 
 
