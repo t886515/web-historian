@@ -3,20 +3,27 @@ var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 var fs = require('fs');
 var helper = require('./http-helpers');
+//var fetcher = require('../workers/htmlfetcher');
 
 exports.handleRequest = function (req, res) {
   // console.log(req);
   console.log('Serving ', req.method, ' for ', req.url);
+  
   if (req.method === 'POST') {
-    var statusCode = 201;
+    var statusCode = 302;
     var body = '';
     res.writeHead(statusCode, helper.headers);
     req.on('data', (chunk) => {
       body += chunk;
     });
     req.on('end', () => {
-      console.log('data:', body.slice(4));
-      archive.addUrlToList(body.slice(4));
+      //console.log('data:', body.slice(4));
+      archive.addUrlToList(body.slice(4), (err) => {
+        if (err) {
+          throw err;
+        }
+        console.log('Stop complaining about needing callback. It is posted.');
+      });
       res.end();
     });
   } else if ( req.method === 'GET') {
@@ -33,11 +40,11 @@ exports.handleRequest = function (req, res) {
       var check;
       archive.isUrlArchived(req.url.slice(1), (boolean) => { 
         check = boolean;
-        console.log('is this google?', req.url.slice(1));
-        console.log('boolean status', check); 
+        // console.log('is this google?', req.url.slice(1));
+        // console.log('boolean status', check); 
         if (check) {
           asset = archive.paths.archivedSites + req.url;
-          console.log('asset: ', asset);
+          // console.log('asset: ', asset);
         } else {
           statusCode = 404;
           res.writeHead(statusCode, helper.headers);
@@ -70,6 +77,7 @@ exports.handleRequest = function (req, res) {
     //res.end();
     //res.end(JSON.stringify());
   }
+  //fetcher.htmlfetcher();
   //res.end(archive.paths.list);
 
 };

@@ -60,7 +60,21 @@ exports.isUrlInList = function(url, callback) {
 
 exports.addUrlToList = function(url, callback) {
   // var urlArray = [url];
-  fs.writeFile(exports.paths.list, url + '\n', 'utf8', callback);
+  // fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+  //   console.log('Before: ', data)
+  // })
+
+
+  // exports.isUrlInList(url, (isInList) => {
+  //   if (!isInList) {
+      fs.appendFile(exports.paths.list, url + '\n', 'utf8', callback);
+  //   }
+  // });
+
+
+  // fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+  //   console.log('after', data)
+  // })
 };
 
 exports.isUrlArchived = function(url, callback) {
@@ -72,27 +86,40 @@ exports.isUrlArchived = function(url, callback) {
     if (err) {
       throw err;
     }
-    console.log('what do u actually get??????????', url);
+    //console.log('what do u actually get??????????', url);
     callback(data.includes(url));
     //console.log('what does these look like?', data);
   });
 };
 
 exports.downloadUrls = function(urls) {
-  urls.forEach((url) => {
-    var fixtureName = url;
-    var fixturePath = exports.paths.archivedSites + '/' + fixtureName;
 
-    // Create or clear the file.
-    // var fd = fs.writ(fixturePath, 'w');
-    // console.log(url, 'this i sthe urls');
-    // fs.write(fd, 'google');
-    // fs.close(fd);
-    // console.log('is it here???')
-    // // Write data to the file.
-    fs.writeFile(fixturePath, 'HTML STUFF', 'utf8');
+
+  urls.forEach((url) => {
+    //var fixtureName = url;
+    exports.isUrlArchived(url, (include) => {
+      if (!include) {
+        var fixturePath = exports.paths.archivedSites + '/' + url;
+        console.log('what is this??? please?', fixturePath)
+        // Create or clear the file.
+        // var fd = fs.writ(fixturePath, 'w');
+        // console.log(url, 'this i sthe urls');
+        // fs.write(fd, 'google');
+        // fs.close(fd);
+        // console.log('is it here???')
+        // // Write data to the file.
+        fs.writeFile(fixturePath, 'HTML STUFF', 'utf8', (err) => {
+          if (err) {
+            throw err;
+          }
+          console.log('It has done its job, gives it a break')
+        });
+      }
+    })
     // fs.readFile(fixturePath, 'utf8', (err, data) => {
     //   console.log('DATA: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', data);
     // });
   });
 };
+
+
