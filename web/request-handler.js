@@ -3,7 +3,7 @@ var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 var fs = require('fs');
 var helper = require('./http-helpers');
-//var fetcher = require('../workers/htmlfetcher');
+var fetcher = require('../workers/htmlfetcher');
 
 exports.handleRequest = function (req, res) {
   // console.log(req);
@@ -30,14 +30,20 @@ exports.handleRequest = function (req, res) {
     var statusCode = 200;
     // var test = '';
     var asset;
+    //fetcher.htmlfetcher();
     //console.log('jdfklfjldskjflsjflk');
     //console.log(archive.paths.siteAssets + '/index.html');
     res.writeHead(statusCode, helper.headers);
+     //fetcher.htmlfetcher();
     if (req.url === '/' || req.url === '/index.html') {
       asset = archive.paths.siteAssets + '/index.html';
-      helper.serveAssets(res, asset);
+      helper.serveAssets(res, asset, (data) => { res.end(data); });
+    } else if (req.url === '/style.css') {
+      asset = archive.paths.siteAssets + '/style.css';
+      helper.serveAssets(res, asset, (data) => {res.end(data);});
     } else {
       var check;
+      //fetcher.htmlfetcher();
       archive.isUrlArchived(req.url.slice(1), (boolean) => { 
         check = boolean;
         // console.log('is this google?', req.url.slice(1));
@@ -50,7 +56,7 @@ exports.handleRequest = function (req, res) {
           res.writeHead(statusCode, helper.headers);
           asset = archive.paths.siteAssets + '/loading.html';   
         }
-        helper.serveAssets(res, asset);
+        helper.serveAssets(res, asset, (data) => {res.end(data)});
       });
     }
     
@@ -77,7 +83,7 @@ exports.handleRequest = function (req, res) {
     //res.end();
     //res.end(JSON.stringify());
   }
-  //fetcher.htmlfetcher();
+  // fetcher.htmlfetcher();
   //res.end(archive.paths.list);
 
 };

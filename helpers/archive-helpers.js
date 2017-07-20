@@ -67,7 +67,7 @@ exports.addUrlToList = function(url, callback) {
 
   // exports.isUrlInList(url, (isInList) => {
   //   if (!isInList) {
-      fs.appendFile(exports.paths.list, url + '\n', 'utf8', callback);
+  fs.appendFile(exports.paths.list, url + '\n', 'utf8', callback);
   //   }
   // });
 
@@ -100,7 +100,6 @@ exports.downloadUrls = function(urls) {
     exports.isUrlArchived(url, (include) => {
       if (!include) {
         var fixturePath = exports.paths.archivedSites + '/' + url;
-        console.log('what is this??? please?', fixturePath)
         // Create or clear the file.
         // var fd = fs.writ(fixturePath, 'w');
         // console.log(url, 'this i sthe urls');
@@ -112,10 +111,10 @@ exports.downloadUrls = function(urls) {
           if (err) {
             throw err;
           }
-          console.log('It has done its job, gives it a break')
+          console.log('It has done its job, gives it a break');
         });
-      }
-    })
+    //   }
+    });
     // fs.readFile(fixturePath, 'utf8', (err, data) => {
     //   console.log('DATA: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', data);
     // });
